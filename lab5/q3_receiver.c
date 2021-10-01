@@ -3,33 +3,24 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
   
-// structure for message queue
-struct mesg_buffer {
-    long mesg_type;
-    char mesg_text[100];
+struct msg_buffer {
+    long msg_type;
+    char msg_text[100];
 } message;
   
 int main()
 {
-    key_t key;
+    key_t key = 5678;
     int msgid;
-  
-    // ftok to generate unique key
-    key = ftok("progfile", 65);
-  
-    // msgget creates a message queue
-    // and returns identifier
+    
     msgid = msgget(key, 0666 | IPC_CREAT);
   
-    // msgrcv to receive message
-    msgrcv(msgid, &message, sizeof(message) + 1, 1, 0);
+    msgrcv(msgid, &message, sizeof(message) + 1, 1, 0); //receive
   
-    // display the message
     printf("Data Received is : %s \n", 
-                    message.mesg_text);
+                    message.msg_text); 
   
-    // to destroy the message queue
-    msgctl(msgid, IPC_RMID, NULL);
+    msgctl(msgid, IPC_RMID, NULL); //destroy
   
     return 0;
 }

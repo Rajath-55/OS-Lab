@@ -3,30 +3,22 @@
 #include <sys/msg.h>
 #define MAX 100
   
-// structure for message queue
-struct mesg_buffer {
-    long mesg_type;
-    char mesg_text[100];
+struct msg_buffer {
+    long msg_type;
+    char msg_text[100];
 } message;
   
 int main()
 {
-    key_t key;
+    key_t key = 5678;
     int msgid;
   
-    // ftok to generate unique key
-    key = ftok("progfile", 65);
+    
+    msgid = msgget(key, 0666 | IPC_CREAT); //create
+    message.msg_type = 1;
   
-    // msgget creates a message queue
-    // and returns identifier
-    msgid = msgget(key, 0666 | IPC_CREAT);
-    message.mesg_type = 1;
-  
-    printf("Write Data : ");
-    fgets(message.mesg_text,MAX,stdin);
-  
-    // msgsnd to send message
-    msgsnd(msgid, &message, sizeof(message) + 1, 0);
+    fgets(message.msg_text,MAX,stdin); 
+    msgsnd(msgid, &message, sizeof(message) + 1, 0); //send
   
   
     return 0;
